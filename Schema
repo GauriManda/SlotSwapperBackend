@@ -1,0 +1,75 @@
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE events (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    status VARCHAR(50) NOT NULL CHECK (status IN ('BUSY', 'SWAPPABLE', 'SWAP_PENDING')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT valid_time_range CHECK (start_time < end_time)
+);
+CREATE TABLE swap_requests (
+    id SERIAL PRIMARY KEY,
+    requester_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    recipient_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    requester_slot_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+    recipient_slot_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+    status VARCHAR(50) NOT NULL CHECK (status IN ('PENDING', 'ACCEPTED', 'REJECTED')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    responded_at TIMESTAMP,
+    CONSTRAINT different_users CHECK (requester_id != recipient_id),
+    CONSTRAINT different_slots CHECK (requester_slot_id != recipient_slot_id)
+);
+CREATE OR REPLACE FUNCTION update_updated_at_column() RETURNS TRIGGER AS $$ BEGIN NEW.updated_at = CURRENT_TIMESTAMP;
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER update_users_updated_at BEFORE
+UPDATE ON users FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_events_updated_at BEFORE
+UPDATE ON events FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+INSERT INTO events (user_id, title, start_time, end_time, status)
+VALUES (
+        1,
+        'Team Meeting',
+        '2025-11-01 10:00:00',
+        '2025-11-01 11:00:00',
+        'SWAPPABLE'
+    ),
+    (
+        1,
+        'Client Call',
+        '2025-11-02 14:00:00',
+        '2025-11-02 15:00:00',
+        'BUSY'
+    ),
+    (
+        2,
+        'Project Review',
+        '2025-11-01 15:00:00',
+        '2025-11-01 16:00:00',
+        'SWAPPABLE'
+    ),
+    (
+        2,
+        'Training Session',
+        '2025-11-03 09:00:00',
+        '2025-11-03 10:30:00',
+        'BUSY'
+    ),
+    (
+        3,
+        'Workshop',
+        '2025-11-01 13:00:00',
+        '2025-11-01 14:30:00',
+        'SWAPPABLE'
+    );
