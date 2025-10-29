@@ -6,8 +6,7 @@ npm install
 Add the following in your backend root:
 
 PORT=5000
-DATABASE_URL=your_database_url
-JWT_SECRET=your_strong_secret_key
+DATABASE_URL & JWT_SECRET(from env)
 
 3. Run the Server
 npm start
