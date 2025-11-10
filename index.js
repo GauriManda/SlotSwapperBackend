@@ -521,6 +521,7 @@ app.get("/api/health", (req, res) => {
 app.get("/", (req, res) => {
   res.send("SlotSwapper Backend is running ");
 });
+
 app.get("/test-db", async (req, res) => {
   try {
     const result = await pool.query("SELECT NOW()");
@@ -533,6 +534,7 @@ app.get("/test-db", async (req, res) => {
     res.status(500).json({ error: "❌ Failed to connect to the database" });
   }
 });
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
