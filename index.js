@@ -21,6 +21,10 @@ const pool = new Pool({
   database: process.env.DB_NAME,
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT || 5432,
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? { rejectUnauthorized: false }
+      : false,
 });
 
 // Auth Middleware
@@ -118,8 +122,6 @@ app.post("/api/auth/login", async (req, res) => {
     res.status(500).json({ error: "Server error during login" });
   }
 });
-
-// ==================== EVENT ROUTES ====================
 
 // Get user's events
 app.get("/api/events", authenticateToken, async (req, res) => {
@@ -258,8 +260,6 @@ app.delete("/api/events/:id", authenticateToken, async (req, res) => {
     res.status(500).json({ error: "Failed to delete event" });
   }
 });
-
-// ==================== SWAP ROUTES ====================
 
 // Get swappable slots (excluding user's own)
 app.get("/api/swappable-slots", authenticateToken, async (req, res) => {
