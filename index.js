@@ -10,16 +10,25 @@ const PORT = process.env.PORT || 10000;
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // Middleware
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://slot-swapper-frontend-three.vercel.app",
+];
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://slot-swapper-frontend-three.vercel.app/",
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
+
+app.use(express.json());
 
 app.use(express.json());
 
