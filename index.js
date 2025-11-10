@@ -15,12 +15,15 @@ const allowedOrigins = [
   "https://slot-swapper-frontend-three.vercel.app",
   "https://slot-swapper-frontend-gauri-mandas-projects.vercel.app",
 ];
+
 app.use(
   cors({
     origin: function (origin, callback) {
+      console.log("Request Origin:", origin); // 👈 helps debug
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
+        console.warn("Blocked by CORS:", origin);
         callback(new Error("Not allowed by CORS"));
       }
     },
