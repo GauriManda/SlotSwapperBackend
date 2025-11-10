@@ -12,9 +12,9 @@ const JWT_SECRET = process.env.JWT_SECRET;
 // Middleware
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://slot-swapper-frontend-three.vercel.app/",
+  "https://slot-swapper-frontend-three.vercel.app",
+  "https://slot-swapper-frontend-gauri-mandas-projects.vercel.app",
 ];
-
 app.use(
   cors({
     origin: function (origin, callback) {
