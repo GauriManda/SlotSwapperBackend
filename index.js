@@ -521,7 +521,18 @@ app.get("/api/health", (req, res) => {
 app.get("/", (req, res) => {
   res.send("SlotSwapper Backend is running ");
 });
-
+app.get("/test-db", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT NOW()");
+    res.json({
+      message: "✅ Connected to PostgreSQL successfully!",
+      server_time: result.rows[0].now,
+    });
+  } catch (error) {
+    console.error("Database connection test failed:", error);
+    res.status(500).json({ error: "❌ Failed to connect to the database" });
+  }
+});
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
