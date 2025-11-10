@@ -10,7 +10,17 @@ const PORT = process.env.PORT || 10000;
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://slot-swapper-frontend-three.vercel.app/",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 // PostgreSQL connection
@@ -39,8 +49,6 @@ const authenticateToken = (req, res, next) => {
     next();
   });
 };
-
-// ==================== AUTH ROUTES ====================
 
 // Sign Up
 app.post("/api/auth/signup", async (req, res) => {
@@ -522,12 +530,12 @@ app.get("/test-db", async (req, res) => {
   try {
     const result = await pool.query("SELECT NOW()");
     res.json({
-      message: "✅ Connected to PostgreSQL successfully!",
+      message: " Connected to PostgreSQL successfully!",
       server_time: result.rows[0].now,
     });
   } catch (error) {
     console.error("Database connection test failed:", error);
-    res.status(500).json({ error: "❌ Failed to connect to the database" });
+    res.status(500).json({ error: " Failed to connect to the database" });
   }
 });
 
