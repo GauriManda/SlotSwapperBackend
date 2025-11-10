@@ -519,6 +519,9 @@ app.get("/api/swap-requests/outgoing", authenticateToken, async (req, res) => {
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
+app.get("/", (req, res) => {
+  res.send("SlotSwapper Backend is running ");
+});
 
 // Start server
 app.listen(PORT, () => {
